@@ -1,5 +1,5 @@
-const Demo = require('../Modal/demoModal');
-const sgMail = require('@sendgrid/mail');
+const Demo = require("../Modal/demoModal");
+const sgMail = require("@sendgrid/mail");
 
 // Optimize SendGrid initialization
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -13,8 +13,14 @@ const scheduleDemoController = async (req, res) => {
 
     // Fast validation with early returns
     const requiredFields = [
-      'firstName', 'lastName', 'jobTitle', 
-      'companyName', 'email', 'date', 'timeZone', 'usesLLM'
+      "firstName",
+      "lastName",
+      "jobTitle",
+      "companyName",
+      "email",
+      "date",
+      "timeZone",
+      "usesLLM",
     ];
 
     for (const field of requiredFields) {
@@ -24,7 +30,7 @@ const scheduleDemoController = async (req, res) => {
     }
 
     if (!validateEmail(data.email)) {
-      return res.status(400).json({ error: 'Invalid email format' });
+      return res.status(400).json({ error: "Invalid email format" });
     }
 
     // Simplified time parsing
@@ -34,33 +40,35 @@ const scheduleDemoController = async (req, res) => {
     const [demoRequest] = await Promise.all([
       Demo.create({
         ...data,
-        date: userDateTime
+        date: userDateTime,
       }),
       // Optional: Send email concurrently
-      sgMail.send({
-        to: data.email,
-        from: process.env.FROM_EMAIL,
-        subject: 'Demo Session Confirmation',
-        html: `
+      sgMail
+        .send({
+          to: data.email,
+          from: process.env.FROM_EMAIL,
+          subject: "Demo Session Request",
+          html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
-            <h2>Demo Session Confirmation</h2>
+            <h2>Demo Session Request Received</h2>
             <p>Dear ${data.firstName} ${data.lastName},</p>
-            <p>Thank you for scheduling a demo session with us. Your demo has been successfully scheduled.</p>
+            <p>Thank you for scheduling a demo session with us. Your demo request has been successfully received.</p>
             <p>Your demo is scheduled for ${userDateTime.toLocaleString()}.</p>
           </div>
-        `
-      }).catch(console.error) // Log email errors without blocking
+
+        `,
+        })
+        .catch(console.error), // Log email errors without blocking
     ]);
 
     return res.status(201).json({
-      message: 'Demo scheduled successfully',
-      data: demoRequest
+      message: "Demo scheduled successfully",
+      data: demoRequest,
     });
-
   } catch (error) {
-    console.error('Demo scheduling error:', error);
+    console.error("Demo scheduling error:", error);
     return res.status(500).json({
-      error: 'Error scheduling demo'
+      error: "Error scheduling demo",
     });
   }
 };
