@@ -9,23 +9,31 @@ const routes = require("./Route/Routes");
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware
-app.use(bodyParser.json());
-app.use(cors());
+// CORS configuration
+const corsOptions = {
+  origin: ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:3300'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
 
+// Middleware
+app.use(cors(corsOptions));
+app.use(bodyParser.json());
 app.use(express.json());
 
-// Define your routes
-app.use("/", routes);
+// Remove the extra slash in routes
+app.use(routes);
 
-// app.use(express.static(path.join(__dirname, "./main_app")));
-// app.get("*", (req, res) => {
-//   res.sendFile(path.join(__dirname, "./main_app", "index.html"));
-// });
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Something went wrong!' });
+});
 
 const start = async () => {
   try {
-    // console.log("Mongo URI:", process.env.MONGO_URI); // Check if this prints the correct URI
     await db(process.env.MONGO_URI);
     app.listen(port, () => console.log(`App is running on port : ${port}`));
   } catch (error) {
@@ -34,3 +42,6 @@ const start = async () => {
 };
 
 start();
+
+// Export for Vercel
+module.exports = app;
