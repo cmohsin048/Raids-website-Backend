@@ -49,6 +49,16 @@ const getUserEmailHTML = (userData, dateTime) => `
 
 const scheduleDemoController = async (req, res) => {
   try {
+    // Add CORS headers specifically for this route
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+    // Handle OPTIONS request
+    if (req.method === 'OPTIONS') {
+      return res.status(204).end();
+    }
+
     const data = req.body;
 
     // Validate required fields with more descriptive error messages
@@ -134,6 +144,7 @@ const scheduleDemoController = async (req, res) => {
       message: "Demo scheduled successfully",
       data: demoRequest,
     });
+
   } catch (error) {
     console.error("Demo scheduling error:", error);
     return res.status(500).json({
