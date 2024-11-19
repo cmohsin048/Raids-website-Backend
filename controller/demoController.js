@@ -35,14 +35,13 @@ const getAdminEmailHTML = (userData, dateTime) => `
   </div>
 `;
 
-// User confirmation email template
 const getUserEmailHTML = (userData, dateTime) => `
   <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
     <h2>Demo Session Request</h2>
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
-            <p>Dear ${data.firstName} ${data.lastName},</p>
+            <p>Dear ${userData.firstName} ${userData.lastName},</p>
             <p>Thank you for scheduling a demo session with us. Your demo request has been successfully received.</p>
-            <p>Your demo is scheduled for ${userDateTime.toLocaleString()}.</p>
+            <p>Your demo is scheduled for ${dateTime.toLocaleString()}.</p>
           </div>
   </div>
 `;

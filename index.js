@@ -9,49 +9,26 @@ const routes = require("./Route/Routes");
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Updated CORS configuration
 const corsOptions = {
-  origin: [
-    'http://localhost:3000',
-    'https://raidsai.ai', // Add your production domain
-    // Add any other domains that need access
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
-  credentials: true,
-  optionsSuccessStatus: 204,
-  preflightContinue: false
-};
-
-// Apply cors before other middleware
-app.use(cors(corsOptions));
-
-// Handle preflight requests explicitly
-app.options('*', cors(corsOptions));
-
+    origin: '*', // Allow all origins
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+    optionsSuccessStatus: 200
+  };
+  
+  // Middleware
+  app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(express.json());
 
-// Add headers middleware
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  if (req.method === 'OPTIONS') {
-    return res.status(204).end();
-  }
-  next();
-});
-
+// Remove the extra slash in routes
 app.use(routes);
 
-// Enhanced error handling
+// Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Error:', err.stack);
-  res.status(err.status || 500).json({
-    error: process.env.NODE_ENV === 'production' ? 'Something went wrong!' : err.message,
-    details: process.env.NODE_ENV === 'development' ? err.stack : undefined
-  });
+  console.error(err.stack);
+  res.status(500).json({ error: 'Something went wrong!' });
 });
 
 const start = async () => {
