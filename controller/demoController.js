@@ -40,8 +40,7 @@ const getUserEmailHTML = (userData, dateTime) => `
     <h2>Demo Session Request</h2>
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
             <p>Dear ${userData.firstName} ${userData.lastName},</p>
-            <p>Thank you for scheduling a demo session with us. Your demo request has been successfully received.</p>
-            <p>Your demo is scheduled for ${dateTime.toLocaleString()}.</p>
+            <p>Thank you. We have received your request we will get back to you soon.</p>
           </div>
   </div>
 `;
